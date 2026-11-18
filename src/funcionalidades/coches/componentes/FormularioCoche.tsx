@@ -1,27 +1,97 @@
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, type DefaultValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { crearEsquemaFormularioCoche, type CocheFormulario } from "../esquemas/formulario.esquema";
 import {
     COMBUSTIBLES, TRACCIONES,
     LIMITES_FECHA, LIMITES_POTENCIA, LIMITES_PAR, LIMITES_CILINDRADA, LIMITES_PESO,
 } from "../esquemas/base.esquema";
+import type { Coche } from "../esquemas/api.esquema";
 import { CampoFormulario } from "./CampoFormulario";
+import { BannerError } from "./BannerError";
+import { useCoches } from "../hooks/useCoches";
 import { useCrearCoche } from "../hooks/useCrearCoche";
-const esquema = crearEsquemaFormularioCoche();
+import { useActualizarCoche } from "../hooks/useActualizarCoche";
+import { useBorrarCoches } from "../hooks/useBorrarCoches";
 
-export function FormularioCoche() {
+// Formulario en blanco (los undefined dejan los inputs vacíos)
+const FORMULARIO_VACIO: DefaultValues<CocheFormulario> = {
+    urlLogo: "",
+    marca: "",
+    urlFoto: "",
+    modelo: "",
+    year: undefined,
+    potenciaCv: undefined,
+    parMotorNm: undefined,
+    cilindradaL: undefined,
+    pesoKg: undefined,
+    combustible: undefined,
+    traccion: undefined,
+};
+
+type Props = {
+    cocheEditando: Coche | null;
+    alTerminarEdicion: () => void;
+};
+
+export function FormularioCoche({ cocheEditando, alTerminarEdicion }: Props) {
+    // Para detectar repetidos: todos los coches menos el que se está editando
+    const { data } = useCoches();
+    const coches = data?.coches ?? [];
+    const cochesExistentes = cocheEditando
+        ? coches.filter((coche) => coche.id !== cocheEditando.id)
+        : coches;
+    const esquema = crearEsquemaFormularioCoche(cochesExistentes);
+
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<CocheFormulario>({ resolver: zodResolver(esquema) });
+    } = useForm<CocheFormulario>({
+        resolver: zodResolver(esquema),
+        defaultValues: FORMULARIO_VACIO,
+    });
+
     const crearCoche = useCrearCoche();
+    const borrarTodos = useBorrarCoches();
+    const [confirmandoBorrado, setConfirmandoBorrado] = useState(false);
+
+    // Todos los ids: los válidos y los corruptos que tengan id
+    const idsTodos = [...coches.map((coche) => coche.id), ...(data?.idsDescartados ?? [])];
+
+    function borrarTodosLosCoches() {
+        borrarTodos.mutate(idsTodos, {
+            onSuccess: () => {
+                setConfirmandoBorrado(false);
+                if (cocheEditando) alTerminarEdicion(); // el coche en edición ya no existe
+            },
+        });
+    }
+    const actualizarCoche = useActualizarCoche();
+    const mutacion = cocheEditando ? actualizarCoche : crearCoche;
+
+    // Al pulsar "Editar" en una tarjeta, se rellenan los campos con ese coche
+    useEffect(() => {
+        if (cocheEditando) {
+            // El id sobra en el formulario, pero no molesta: Zod lo descarta al validar
+            reset(cocheEditando);
+        } else {
+            reset(FORMULARIO_VACIO);
+        }
+    }, [cocheEditando, reset]);
 
     function alEnviar(datos: CocheFormulario) {
-        crearCoche.mutate(datos, {
-            onSuccess: () => reset(), // vacía el formulario tras guardar
-        });
+        if (cocheEditando) {
+            actualizarCoche.mutate(
+                { id: cocheEditando.id, coche: datos },
+                { onSuccess: () => alTerminarEdicion() },
+            );
+        } else {
+            crearCoche.mutate(datos, {
+                onSuccess: () => reset(FORMULARIO_VACIO),
+            });
+        }
     }
 
     // Atributos de accesibilidad comunes a todos los inputs
@@ -32,7 +102,11 @@ export function FormularioCoche() {
     });
 
     return (
-        <form onSubmit={handleSubmit(alEnviar)} noValidate>
+        <form onSubmit={handleSubmit(alEnviar)} noValidate autoComplete="off" aria-labelledby="titulo-formulario">
+            <h2 id="titulo-formulario">
+                {cocheEditando ? `Editando ${cocheEditando.marca} ${cocheEditando.modelo}` : "Nuevo coche"}
+            </h2>
+
             <CampoFormulario id="urlLogo" etiqueta="URL del logo" error={errors.urlLogo?.message}>
                 <input type="url" placeholder="https://…" {...accesibilidad("urlLogo")} {...register("urlLogo")} />
             </CampoFormulario>
@@ -118,9 +192,59 @@ export function FormularioCoche() {
                 </select>
             </CampoFormulario>
 
-            <button type="submit" disabled={crearCoche.isPending}>
-                {crearCoche.isPending ? "Guardando…" : "Registrar coche"}
-            </button>
+            <div className="acciones-formulario">
+                <button type="submit" disabled={mutacion.isPending}>
+                    {mutacion.isPending
+                        ? "Guardando…"
+                        : cocheEditando ? "Guardar cambios" : "Registrar coche"}
+                </button>
+                {cocheEditando && (
+                    <button type="button" onClick={alTerminarEdicion} disabled={mutacion.isPending}>
+                        Cancelar edición
+                    </button>
+                )}
+
+                {confirmandoBorrado ? (
+                    <span className="confirmar-borrado">
+                        ¿Borrar {idsTodos.length === 1 ? "el coche" : `los ${idsTodos.length} coches`}?
+                        <button
+                            type="button"
+                            className="peligro"
+                            onClick={borrarTodosLosCoches}
+                            disabled={borrarTodos.isPending}
+                        >
+                            {borrarTodos.isPending ? "Borrando…" : "Sí, borrar todos"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setConfirmandoBorrado(false)}
+                            disabled={borrarTodos.isPending}
+                        >
+                            Cancelar
+                        </button>
+                    </span>
+                ) : (
+                    <button
+                        type="button"
+                        className="peligro"
+                        onClick={() => setConfirmandoBorrado(true)}
+                        disabled={idsTodos.length === 0 || mutacion.isPending}
+                    >
+                        Borrar todos
+                    </button>
+                )}
+            </div>
+
+            {borrarTodos.isError && (
+                <BannerError mensaje={`No se han podido borrar: ${borrarTodos.error.message}`} />
+            )}
+
+            {mutacion.isError && (
+                <BannerError mensaje={`No se ha podido guardar: ${mutacion.error.message}`} />
+            )}
+            {crearCoche.isSuccess && !cocheEditando && (
+                <p className="exito" role="status">Coche registrado correctamente.</p>
+            )}
         </form>
     );
 }
