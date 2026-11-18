@@ -1,0 +1,447 @@
+/* =========================================================
+   Registra coches deportivos — estilos
+   Paleta general: azules de Alpine y amarillo de Renault
+   ========================================================= */
+
+:root {
+    --azul-noche: #0b1f3a;      /* fondo de la página */
+    --azul-alpine: #1d4f91;     /* superficies y botones */
+    --azul-claro: #00a3e0;      /* acentos y foco */
+    --amarillo-renault: #ffcc33;
+    --blanco: #ffffff;
+    --gris-texto: #5b6472;
+    --gris-borde: #d5dbe3;
+    --rojo-error: #c62828;
+
+    --radio: 10px;
+    --sombra: 0 6px 18px rgba(0, 0, 0, 0.25);
+
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    color: var(--blanco);
+    background-color: var(--azul-noche);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--azul-noche) 0%, #102a4f 100%);
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+}
+
+h1 {
+    margin: 0 0 2rem;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 4px solid var(--amarillo-renault);
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    margin: 3rem 0 1rem;
+    color: var(--amarillo-renault);
+}
+
+/* Foco visible para navegar con teclado */
+:focus-visible {
+    outline: 3px solid var(--amarillo-renault);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   Formulario
+   ========================================================= */
+
+form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--blanco);
+    color: var(--azul-noche);
+    border-radius: var(--radio);
+    border-top: 6px solid var(--azul-claro);
+    box-shadow: var(--sombra);
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.campo label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.campo input,
+.campo select {
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    color: inherit;
+    background-color: #f7f9fc;
+    border: 2px solid var(--gris-borde);
+    border-radius: 6px;
+    transition: border-color 0.15s;
+}
+
+.campo input:hover,
+.campo select:hover {
+    border-color: var(--azul-claro);
+}
+
+/* Campo con error (lo marca aria-invalid) */
+.campo [aria-invalid="true"] {
+    border-color: var(--rojo-error);
+    background-color: #fdecec;
+}
+
+.campo-error {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--rojo-error);
+}
+
+form button[type="submit"] {
+    grid-column: 1 / -1;
+    justify-self: start;
+    padding: 0.75rem 2rem;
+    font: inherit;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--azul-noche);
+    background-color: var(--amarillo-renault);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.15s;
+}
+
+form button[type="submit"]:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+form button[type="submit"]:disabled {
+    cursor: progress;
+    opacity: 0.6;
+}
+
+/* =========================================================
+   Estados: cargando y error
+   ========================================================= */
+
+.cargando {
+    color: var(--azul-claro);
+    font-style: italic;
+}
+
+.banner-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    color: var(--blanco);
+    background-color: var(--rojo-error);
+    border-radius: var(--radio);
+}
+
+.banner-error p {
+    margin: 0;
+}
+
+.banner-error button {
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--rojo-error);
+    background-color: var(--blanco);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================================================
+   Lista y tarjetas
+   ========================================================= */
+
+.lista-coches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Colores por defecto: marcas sin estilo propio */
+.tarjeta-coche {
+    --marca-fondo: var(--azul-alpine);
+    --marca-texto: var(--blanco);
+    --marca-acento: var(--amarillo-renault);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--azul-noche);
+    background-color: var(--blanco);
+    border-radius: var(--radio);
+    border-bottom: 6px solid var(--marca-acento);
+    box-shadow: var(--sombra);
+    transition: transform 0.15s;
+}
+
+.tarjeta-coche:hover {
+    transform: translateY(-4px);
+}
+
+.tarjeta-coche header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--marca-texto);
+    background-color: var(--marca-fondo);
+}
+
+/* Logo sobre fondo blanco para que se vea con cualquier color de marca */
+.tarjeta-coche header img {
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+    object-fit: contain;
+    background-color: var(--blanco);
+    border-radius: 8px;
+}
+
+.tarjeta-coche h3 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+/* Foto del coche */
+.tarjeta-coche > img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background-color: var(--gris-borde);
+    border-bottom: 4px solid var(--marca-acento);
+}
+
+.tarjeta-coche dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0;
+    padding: 1rem;
+}
+
+.tarjeta-coche dt {
+    color: var(--gris-texto);
+    font-size: 0.9rem;
+}
+
+.tarjeta-coche dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+    text-transform: capitalize;
+}
+
+/* =========================================================
+   Colores por marca
+   La clase sale de claseMarca(): minúsculas, sin tildes
+   y con guiones (p. ej. "Aston Martin" → .aston-martin).
+   Colores aproximados a la identidad de cada marca.
+   ========================================================= */
+
+.tarjeta-coche.renault {
+    --marca-fondo: #ffcc33;
+    --marca-texto: #000000;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.alpine {
+    --marca-fondo: #1d4f91;
+    --marca-texto: #ffffff;
+    --marca-acento: #00a3e0;
+}
+
+.tarjeta-coche.aston-martin {
+    --marca-fondo: #00594f;
+    --marca-texto: #ffffff;
+    --marca-acento: #cedc00;
+}
+
+.tarjeta-coche.ferrari {
+    --marca-fondo: #d40000;
+    --marca-texto: #ffffff;
+    --marca-acento: #fff200;
+}
+
+.tarjeta-coche.porsche {
+    --marca-fondo: #000000;
+    --marca-texto: #ffffff;
+    --marca-acento: #c9a13b;
+}
+
+.tarjeta-coche.lamborghini {
+    --marca-fondo: #000000;
+    --marca-texto: #ddb321;
+    --marca-acento: #ddb321;
+}
+
+.tarjeta-coche.nissan {
+    --marca-fondo: #c3002f;
+    --marca-texto: #ffffff;
+    --marca-acento: #1a1a1a;
+}
+
+.tarjeta-coche.mclaren {
+    --marca-fondo: #ff8000;
+    --marca-texto: #000000;
+    --marca-acento: #1a1a1a;
+}
+
+.tarjeta-coche.bmw {
+    --marca-fondo: #1c69d4;
+    --marca-texto: #ffffff;
+    --marca-acento: #e22400;
+}
+
+.tarjeta-coche.mercedes,
+.tarjeta-coche.mercedes-benz,
+.tarjeta-coche.mercedes-amg {
+    --marca-fondo: #a7a9ac;
+    --marca-texto: #000000;
+    --marca-acento: #00a19c;
+}
+
+.tarjeta-coche.audi {
+    --marca-fondo: #bb0a30;
+    --marca-texto: #ffffff;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.lotus {
+    --marca-fondo: #00573f;
+    --marca-texto: #ffffff;
+    --marca-acento: #fff200;
+}
+
+.tarjeta-coche.bugatti {
+    --marca-fondo: #1f3a93;
+    --marca-texto: #ffffff;
+    --marca-acento: #be0f34;
+}
+
+.tarjeta-coche.toyota {
+    --marca-fondo: #eb0a1e;
+    --marca-texto: #ffffff;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.honda {
+    --marca-fondo: #cc0000;
+    --marca-texto: #ffffff;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.mazda {
+    --marca-fondo: #910a2d;
+    --marca-texto: #ffffff;
+    --marca-acento: #a7a9ac;
+}
+
+.tarjeta-coche.subaru {
+    --marca-fondo: #1f4e9e;
+    --marca-texto: #ffffff;
+    --marca-acento: #f2c500;
+}
+
+.tarjeta-coche.mitsubishi {
+    --marca-fondo: #e60012;
+    --marca-texto: #ffffff;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.chevrolet {
+    --marca-fondo: #000000;
+    --marca-texto: #cd9834;
+    --marca-acento: #cd9834;
+}
+
+.tarjeta-coche.ford {
+    --marca-fondo: #003478;
+    --marca-texto: #ffffff;
+    --marca-acento: #ffffff;
+}
+
+.tarjeta-coche.dodge {
+    --marca-fondo: #d50032;
+    --marca-texto: #ffffff;
+    --marca-acento: #000000;
+}
+
+.tarjeta-coche.maserati {
+    --marca-fondo: #0c2340;
+    --marca-texto: #ffffff;
+    --marca-acento: #a7a9ac;
+}
+
+.tarjeta-coche.alfa-romeo {
+    --marca-fondo: #981e32;
+    --marca-texto: #ffffff;
+    --marca-acento: #00843d;
+}
+
+.tarjeta-coche.jaguar {
+    --marca-fondo: #004225;
+    --marca-texto: #ffffff;
+    --marca-acento: #a7a9ac;
+}
+
+.tarjeta-coche.abarth {
+    --marca-fondo: #1a1a1a;
+    --marca-texto: #ffffff;
+    --marca-acento: #e2001a;
+}
+
+.tarjeta-coche.cupra {
+    --marca-fondo: #1a1a1a;
+    --marca-texto: #b87333;
+    --marca-acento: #b87333;
+}
+
+.tarjeta-coche.koenigsegg {
+    --marca-fondo: #000000;
+    --marca-texto: #ffffff;
+    --marca-acento: #f5a623;
+}
+
+/* =========================================================
+   Accesibilidad: sin animaciones si el usuario lo pide
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
+}
