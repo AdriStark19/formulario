@@ -9,7 +9,9 @@
 
 ## Uso de IA
 
--
+- He utilizado Claude para ir construyendo el código por bloques, en algunos casos he copiado el código completo tras revisar y pedir los cambios completos, y en otros casos ha sido ir un poco más línea a línea. 
+
+- CSS y Html completamente delegados en Claude dándole las pautas de diseño que quiero.
 
 ## Autopsia
 
