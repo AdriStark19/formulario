@@ -7,6 +7,8 @@
 Necesitas dos terminales, una para la API falsa y otra para la web:
 
 ```bash
+
+npm test      # tests de Vitest: validación de la API con Zod y descarte de datos corruptos
 npm install
 npm run api   # json-server en http://localhost:3001/coches (lee db.json)
 npm run dev   # la app en http://localhost:5173
