@@ -4,14 +4,40 @@
   **Tecnologías:** React 19 · TypeScript · Vite · Vitest
 
 ## Cómo probarlo
+Necesitas dos terminales, una para la API falsa y otra para la web:
 
+```bash
+npm install
+npm run api   # json-server en http://localhost:3001/coches (lee db.json)
+npm run dev   # la app en http://localhost:5173
+```
 
+La URL de la API se lee del archivo `.env` (`VITE_URL_API`), que está incluido en el repo.
+Si cambias el `.env`, reinicia `npm run dev` para que Vite lo vuelva a leer.
+
+**Qué probar**
+- **Validación:** enviar el formulario vacío o con datos fuera de rango; cada campo muestra su error.
+- **Refinamientos:** un diésel anterior a 1936, tracción total anterior a 1903, la misma URL en
+  logo y foto, o un coche repetido (marca + modelo + año).
+- **Crear, editar y borrar:** la lista se actualiza sola tras cada cambio, sin recargar la página.
+- **Error de red:** parar `npm run api` y recargar; sale el aviso con botón de reintentar.
+- **Dato corrupto (bonus):** editar a mano un coche en `db.json` (por ejemplo
+  `"potenciaCv": "cafetera"`); ese coche se oculta, el resto se sigue mostrando, aparece un aviso
+  con opción de borrarlo y en la consola (F12) se ve qué campo falla.
 
 ## Uso de IA
 
-- He utilizado Claude para ir construyendo el código por bloques, en algunos casos he copiado el código completo tras revisar y pedir los cambios completos, y en otros casos ha sido ir un poco más línea a línea. 
-
-- CSS y Html completamente delegados en Claude dándole las pautas de diseño que quiero.
+- He utilizado Claude para ir construyendo el código por bloques. En algunos casos he copiado el
+  código completo tras revisarlo y pedir los cambios; en otros he ido más línea a línea,
+  escribiendo yo el código y usando Claude para revisarlo y corregir errores.
+- CSS y HTML (el JSX de los componentes) completamente delegados en Claude, dándole las pautas de
+  diseño que quería: colores de Alpine y Renault para la página y los colores de cada marca en
+  las tarjetas.
+- Claude ha propuesto la estructura de carpetas, los esquemas de Zod, los hooks de TanStack Query
+  y la gestión de errores. Las decisiones de qué entraba y qué no son mías y están explicadas en
+  la autopsia.
+- Los datos de algunos coches de ejemplo en `db.json` los ha buscado Claude en fuentes técnicas mientras que otros los he buscado yo o rellenado porque los conozco.
+  (fabricantes y prensa especializada), y las imágenes son de Wikimedia Commons.
 
 ## Autopsia
 
