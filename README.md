@@ -26,3 +26,5 @@
 - La IA propuso unos rangos de potencia, par y peso más estrechos (hasta 2000 CV, 3000 Nm y 400–5000 kg). Los he ajustado a lo común entre vehículos deportivos.
 
 - La IA propuso como refinamientos la relación peso/potencia (kg/CV), la potencia por litro (CV/L) y que modelo fuese distinto de marca. No los he usado; he elegido en su lugar las reglas de diésel desde 1936, tracción total desde 1903 y coches no repetidos porque sí son cosas inamovibles basadas en datos históricos hay coches que sí tienen una relación peso potencia 1:1 o incluso superior como un F1. Además el Mini original tenía el mismo nombre que la marca y hay algún caso más.
+
+- Exportación límites como constantes agrupados por campo en lugar de por ejemplo potencia.cv(min 1, max 3500)

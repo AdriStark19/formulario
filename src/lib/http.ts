@@ -1,4 +1,4 @@
-export const URL_API = "http://localhost:3001";
+export const URL_API = import.meta.env.VITE_URL_API;
 
 // Hace la petición y lanza un error si el servidor no responde con 2xx.
 // Devuelve unknown a propósito: quien llama tiene que validar con Zod.
